@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Service 1: Backend API (Express + Node.js)
+  backend:
+    build: ./backend
+    container_name: taskmanager-backend
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI} # Read the value from a .env file or your shell
+    ports:
+      - "5000:5000"
+    # 'depends_on' for mongodb is removed since we're using Atlas
+    dns: 
+      - "8.8.8.8"
+      - "1.1.1.1"
+    restart: unless-stopped
+
+  # Service 2: Frontend (Next.js)
+  frontend:
+    build: ./frontend
+    container_name: taskmanager-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./frontend:/app"
+      - "/node_modules"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend # We can still keep this to ensure boot order
+    restart: unless-stopped
+
+# We no longer need the 'volumes' or 'networks' section since we aren't running our own MongoDB container.
+# Docker Compose's default network is sufficient for frontend/backend communication.
