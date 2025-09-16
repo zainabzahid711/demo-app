@@ -3,11 +3,16 @@ import React, { useState } from "react";
 import InputField from "./inputField";
 import SelectField from "./selectField";
 import PasswordField from "./passwordField";
-import SocialAuthButtons from "./socialAuthButtons";
 import { FormData } from "../../types/auth";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const SignUpForm: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const router = useRouter();
+
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -26,12 +31,39 @@ const SignUpForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
-  };
+    setIsLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccessMessage("Account created successfully!");
+        console.log("User created successfully:", data.user);
+
+        router.push("./dashboard");
+      } else {
+        setErrorMessage(data.message || "Signup failed");
+        console.error("Signup failed:", data.message);
+      }
+    } catch (error) {
+      setErrorMessage("Network error. Please try again.");
+      console.error("Error during signup:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const biologicalSexOptions = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
@@ -144,10 +176,19 @@ const SignUpForm: React.FC = () => {
         {/* Sign Up Button */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-3.5 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium text-sm transition-colors mt-6"
+          disabled={isLoading}
+          className={`w-full bg-blue-500 text-white py-3.5 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium text-sm transition-colors mt-6 ${
+            isLoading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
-          Sign Up
+          {isLoading ? "Creating account..." : "Sign Up"}
         </button>
+        {errorMessage && (
+          <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
+        )}
+        {successMessage && (
+          <div className="text-green-500 text-sm mt-2">{successMessage}</div>
+        )}
       </form>
 
       {/* <div className="relative my-6">
