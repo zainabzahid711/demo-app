@@ -137,9 +137,18 @@ const OnboardingWrapper: React.FC<OnboardingWrapperProps> = ({
       <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <CurrentComponent
           onSubmit={handleNext}
-          onPrevious={currentStep > 1 ? handlePrevious : undefined}
+          onPrevious={
+            currentStep > 1
+              ? handlePrevious
+              : (undefined as unknown as (() => void) &
+                  (() => void) &
+                  (() => void) &
+                  (() => void))
+          }
           initialData={
-            onboardingData[steps[currentStep - 1].title as keyof OnboardingData]
+            onboardingData[
+              steps[currentStep - 1].title as keyof OnboardingData
+            ] as any
           }
           onClose={onClose}
           currentStep={currentStep}
