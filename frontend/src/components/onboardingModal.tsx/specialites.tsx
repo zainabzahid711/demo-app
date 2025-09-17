@@ -117,35 +117,41 @@ const Specialities: React.FC<SpecialitiesProps> = ({
 
   // Generate step indicators
   const renderSteps = () => {
-    const steps = [];
-    for (let i = 1; i <= totalSteps; i++) {
-      const isActive = i === currentStep;
-      const isCompleted = i < currentStep;
+    return (
+      <div className="flex items-center w-full max-w-3xl mx-auto">
+        {Array.from({ length: totalSteps }, (_, i) => {
+          const step = i + 1;
+          const isActive = step === currentStep;
+          const isCompleted = step < currentStep;
 
-      steps.push(
-        <div key={i} className="flex items-center">
-          <div
-            className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
-              isActive
-                ? "bg-blue-500 text-white border-2 border-blue-500"
-                : isCompleted
-                ? "bg-green-500 text-white border-2 border-green-500"
-                : "bg-gray-200 text-gray-600 border-2 border-gray-300"
-            }`}
-          >
-            {isCompleted ? "✓" : i}
-          </div>
-          {i < totalSteps && (
-            <div
-              className={`flex-1 h-1 mx-2 ${
-                isCompleted ? "bg-green-500" : "bg-gray-300"
-              }`}
-            ></div>
-          )}
-        </div>
-      );
-    }
-    return steps;
+          return (
+            <React.Fragment key={step}>
+              {/* Step circle */}
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                  isActive
+                    ? "bg-blue-500 text-white border-2 border-blue-500"
+                    : isCompleted
+                    ? "bg-green-500 text-white border-2 border-green-500"
+                    : "bg-gray-200 text-gray-600 border-2 border-gray-300"
+                }`}
+              >
+                {isCompleted ? "✓" : step}
+              </div>
+
+              {/* Line (don’t render after the last circle) */}
+              {step < totalSteps && (
+                <div
+                  className={`flex-1 h-0.5 ${
+                    isCompleted ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -175,7 +181,7 @@ const Specialities: React.FC<SpecialitiesProps> = ({
           <span className="w-16 text-center">Education</span>
           <span className="w-16 text-center">Experience</span>
           <span className="w-16 text-center">Documents</span>
-          <span className="w-16 text-center">Payments</span>
+          {/* <span className="w-16 text-center">Payments</span> */}
         </div>
       </div>
 
