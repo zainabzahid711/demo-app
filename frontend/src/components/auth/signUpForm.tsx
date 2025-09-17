@@ -90,7 +90,7 @@ const SignUpForm: React.FC = () => {
         <p className="text-sm text-gray-400">
           Already have an account?
           <a
-            href="#"
+            href="/login"
             className="text-green-400 hover:text-blue-600 ml-1 font-medium"
           >
             Login
