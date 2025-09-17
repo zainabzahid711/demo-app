@@ -5,6 +5,7 @@ require("dotenv").config();
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
+const doctorRoutes = require("./routes/doctors");
 
 // Initialize Express app
 const app = express();
@@ -22,9 +23,18 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/doctors", doctorRoutes);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Backend API is running" });
+  res.json({
+    message: "Doctor API is running",
+    endpoints: {
+      getAllDoctors: "GET /api/doctors",
+      getDoctorById: "GET /api/doctors/:id",
+      getDoctorsBySpecialty: "GET /api/doctors/specialty/:specialty",
+      getDoctorsByConsultationType: "GET /api/doctors/consultation/:type",
+    },
+  });
 });
 
 // MongoDB connection
