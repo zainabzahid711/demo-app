@@ -9,6 +9,13 @@ const authRoutes = require("./routes/authRoutes");
 // Initialize Express app
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Your Next.js app URL
+    credentials: true,
+  })
+);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
