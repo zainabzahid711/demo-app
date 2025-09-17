@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Award, Users, Calendar, Clock } from "lucide-react";
+import ActionModal from "@/components/ui/modal/actionModal";
 
 interface Doctor {
   id: number;
@@ -249,6 +250,8 @@ export default function DoctorDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("Documents");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState<"accept" | "reject">("accept");
 
   const doctorId = params.id;
   const tabs = Object.keys(TabComponents);
@@ -280,9 +283,23 @@ export default function DoctorDetailsPage() {
     fetchDoctor();
   }, [doctorId]);
 
+  // Modal handler functions - THESE ARE CRITICAL
   const handleAction = (action: "accept" | "reject") => {
-    console.log(`${action}ing doctor:`, doctorId);
-    // Implement action logic here
+    setModalAction(action);
+    setModalOpen(true);
+  };
+
+  const handleModalConfirm = (reason?: string) => {
+    console.log(`${modalAction}ing doctor:`, doctorId);
+    if (reason) {
+      console.log("Rejection reason:", reason);
+    }
+    // Implement your actual accept/reject API call here
+    setModalOpen(false);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
   };
 
   // Loading state
@@ -416,6 +433,15 @@ export default function DoctorDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Action Modal */}
+      <ActionModal
+        isOpen={modalOpen}
+        onClose={handleModalClose}
+        onConfirm={handleModalConfirm}
+        action={modalAction}
+        doctorName={doctor?.name || ""}
+      />
     </div>
   );
 }
